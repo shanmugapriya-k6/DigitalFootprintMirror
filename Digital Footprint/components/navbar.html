@@ -1,0 +1,25 @@
+<!-- navbar.html -->
+<nav>
+  <div class="nav-left">Digital Footprint Mirror</div>
+  <div class="nav-center">
+    <a href="home.html" ng-class="{ active: isActive('home.html') }">Home</a>
+    <a href="#">Score</a>
+    <a href="#">Report</a>
+    <a href="#">Privacy Tips</a>
+  </div>
+  <div class="nav-right" ng-if="!user">
+    <a href="auth.html" ng-class="{ active: isActive('auth.html') }">Login</a>
+    <a href="auth.html">Sign Up</a>
+  </div>
+  <div class="nav-right" ng-if="user">
+    <div class="greeting">Hi, {{ user.name }}</div>
+    <div class="profile-container">
+      <div class="profile-icon">{{ user.name.charAt(0).toUpperCase() }}</div>
+      <div class="dropdown-content">
+        <a href="#">View Profile</a>
+        <a href="#">Settings</a>
+        <a href="#" ng-click="logout()">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>

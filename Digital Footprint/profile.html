@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="profileApp" ng-controller="profileController">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Page</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #121212;
+      font-family: 'Segoe UI', sans-serif;
+      color: #e0e0e0;
+    }
+
+    .navbar {
+      background-color: #1f1f1f;
+      padding: 1rem 2rem;
+      color:#66e6db;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .profile-card {
+      background-color: #1e1e1e;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      text-align: center;
+      position: relative;
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .profile-picture {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-picture img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid #409e96;
+      object-fit: cover;
+    }
+
+    .edit-pic {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #409e96;
+      border-radius: 50%;
+      padding: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .edit-icon {
+      font-size: 20px;
+      cursor: pointer;
+      color: #409e96;
+      padding: 8px;
+    }
+
+    h2 {
+      margin-top: 1rem;
+      color: #3dbdb2;
+    }
+
+    .email {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 1rem;
+    }
+
+    .info {
+      text-align: left;
+      margin-top: 1rem;
+    }
+
+    .info p {
+      margin: 5px 0;
+    }
+
+    .update-btn {
+      margin-top: 1.5rem;
+      padding: 10px 20px;
+      background-color: #3dbdb2;
+      color: #121212;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #409e96;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    Digital Footprint Mirror
+  </div>
+
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-picture">
+        <img ng-src="{{user.profilePic}}" alt="Profile Picture">
+        <input type="file" id="uploadPic" style="display:none" onchange="angular.element(this).scope().uploadPic(this)">
+        <span class="edit-pic" onclick="document.getElementById('uploadPic').click()">✎</span>
+      </div>
+      <div class="edit-icon" title="Edit Profile" ng-click="editProfile()">
+        ✏️
+      </div>
+    </div>
+
+    <h2>{{user.name}}</h2>
+    <p class="email">{{user.email}}</p>
+
+    <div class="info">
+      <p><strong>Username:</strong> {{user.username}}</p>
+      <p><strong>Phone:</strong> {{user.phone}}</p>
+      <p><strong>Address:</strong> {{user.address}}</p>
+      <p><strong>Joined:</strong> {{user.joinedDate}}</p>
+    </div>
+
+    <button class="update-btn">Update</button>
+  </div>
+
+  <script>
+    angular.module("profileApp", [])
+      .controller("profileController", function ($scope) {
+        // Simulated login data
+        $scope.user = {
+          profilePic: "https://i.imgur.com/Wt9lV5N.png", // Default avatar
+          name: "DigitalFootprint",
+          email: "digitalfootprint@gmail.com",
+          username: "digitalfootprint_01",
+          phone: "+91 9876543210",
+          address: "Madurai, Tamil Nadu",
+          joinedDate: "June 2025"
+        };
+
+        $scope.editProfile = function () {
+          alert("Edit functionality will be available soon.");
+        };
+
+        $scope.logout = function () {
+          alert("You have been logged out.");
+          // Add logout logic if needed
+        };
+
+        $scope.uploadPic = function (input) {
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              $scope.$apply(function () {
+                $scope.user.profilePic = e.target.result;
+              });
+            };
+            reader.readAsDataURL(input.files[0]);
+          }
+        };
+      });
+  </script>
+
+</body>
+</html>

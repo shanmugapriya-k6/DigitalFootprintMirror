@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="PrivacyApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Tips | Digital Mirror</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    nav {
+      background-color: #1b1b1b;
+      padding: 12px 24px;
+      box-shadow: 0 2px 5px #000;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #ccc;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    nav ul li a:hover,
+    nav ul li a.active {
+      background-color: #00d2d3;
+      color: #000;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    #profile {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    #profile img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #00d2d3;
+    }
+
+    #profile h2 {
+      margin-top: 10px;
+      color: #00d2d3;
+    }
+
+    #profile p {
+      font-size: 0.95rem;
+      color: #aaa;
+      margin: 6px 0;
+    }
+
+    #profile button {
+      margin-top: 10px;
+      background: #00d2d3;
+      border: none;
+      padding: 8px 14px;
+      color: #000;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    input[type="text"],
+    select {
+      padding: 8px;
+      width: 100%;
+      border-radius: 4px;
+      border: none;
+      margin-bottom: 15px;
+    }
+
+    .card.tip {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .hover-highlight {
+      background-color: #333 !important;
+    }
+
+    .card.tip h3 {
+      margin: 0 0 5px;
+    }
+
+    .tip-details {
+      background-color: #2a2a2a;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 8px;
+      color: #cfcfcf;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+
+<body ng-controller="TipsController">
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="profile.html">Profile</a></li>
+      <li><a href="score.html">Privacy Score</a></li>
+      <li><a href="report.html">Report</a></li>
+      <li><a href="how.html">How It Works</a></li>
+      <li><a href="tips.html" class="active">Privacy Tips</a></li>
+      <li><a href="settings.html">Settings</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+
+    <!-- Profile Section -->
+    <section id="profile">
+      <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Profile Picture" />
+      <h2>{{ user.name || 'Anonymous' }}</h2>
+      <p>{{ user.email || 'Not Provided' }}</p>
+      <button ng-click="editProfile()">Edit Profile</button>
+    </section>
+
+    <!-- Privacy Tips -->
+    <h1>Privacy Tips</h1>
+    <input type="text" ng-model="searchQuery" placeholder="Search tips">
+    <select ng-model="selectedCategory" ng-change="loadTipsByCategory()" ng-options="cat for cat in categories">
+      <option value="">-- Select Risk Category --</option>
+    </select>
+
+    <div id="tips-list">
+      <div class="card tip"
+           ng-repeat="tip in filteredTips = (tips | filter:searchQuery)"
+           ng-click="toggleDetails(tip)"
+           highlight-on-hover>
+        <h3>{{ tip.title }}</h3>
+        <p>{{ tip.text }}</p>
+        <div class="tip-details" ng-show="expandedTip === tip">
+          {{ tip.detail }}
+        </div>
+      </div>
+      <p ng-if="filteredTips.length === 0">No tips found.</p>
+    </div>
+
+  </main>
+
+  <script>
+    angular.module('PrivacyApp', [])
+
+    .service('TipService', function () {
+      const allTips = {
+        cookies: [
+          { title: "Disable Third-Party Cookies", text: "Prevent tracking across websites by blocking third-party cookies.", detail: "Third-party cookies are created by domains other than the one you are visiting. Disabling them prevents cross-site tracking and improves your privacy." },
+          { title: "Clear Cookies Regularly", text: "Remove stored cookies frequently to minimize tracking.", detail: "Cookies store information about your browsing sessions. Clearing them ensures that websites don’t retain long-term behavioral tracking on you." },
+          { title: "Use Private Browsing Mode", text: "Use incognito/private mode to avoid saving cookies and session data.", detail: "Private mode ensures that cookies and history aren't saved after your session, making it harder for advertisers to track your behavior." },
+          { title: "Set Cookie Expiration Short", text: "Configure your browser to delete cookies after each session.", detail: "Browsers like Firefox allow setting cookie expiration policies. This reduces persistent tracking and improves control." }
+        ],
+        general: [
+          { title: "Use a VPN", text: "VPN hides your IP address and secures your online activities.", detail: "A VPN routes your internet traffic through an encrypted tunnel, shielding your identity and preventing ISPs from tracking you." },
+          { title: "Enable Do Not Track", text: "Turn on Do Not Track in browser settings for extra privacy.", detail: "While not all websites honor this request, enabling 'Do Not Track' sends a signal that you prefer not to be monitored." }
+        ]
+      };
+
+      this.getTipsByScore = function () {
+        const scores = JSON.parse(localStorage.getItem("privacyScores")) || {};
+        const tips = [];
+        for (let cat in allTips) {
+          if (scores[cat] && scores[cat] >= 50) {
+            tips.push(...allTips[cat]);
+          }
+        }
+        return tips.length > 0 ? tips : allTips.general;
+      };
+
+      this.getTipsByCategory = function (category) {
+        return allTips[category] || allTips.general;
+      };
+
+      this.getCategories = function () {
+        return Object.keys(allTips);
+      };
+    })
+
+    .controller('TipsController', function ($scope, TipService) {
+      // Fetch signup data from localStorage
+      $scope.user = {
+        name: localStorage.getItem('username') || 'Anonymous',
+        email: localStorage.getItem('useremail') || 'Not Provided'
+      };
+
+      $scope.searchQuery = "";
+      $scope.tips = TipService.getTipsByScore();
+      $scope.categories = TipService.getCategories();
+      $scope.expandedTip = null;
+
+      $scope.loadTipsByCategory = function () {
+        $scope.tips = $scope.selectedCategory
+          ? TipService.getTipsByCategory($scope.selectedCategory)
+          : TipService.getTipsByScore();
+        $scope.expandedTip = null;
+      };
+
+      $scope.toggleDetails = function (tip) {
+        $scope.expandedTip = ($scope.expandedTip === tip) ? null : tip;
+      };
+
+      $scope.editProfile = function () {
+        const newName = prompt("Edit Name:", $scope.user.name);
+        const newEmail = prompt("Edit Email:", $scope.user.email);
+        if (newName) {
+          $scope.user.name = newName;
+          localStorage.setItem("username", newName);
+        }
+        if (newEmail) {
+          $scope.user.email = newEmail;
+          localStorage.setItem("useremail", newEmail);
+        }
+      };
+    })
+
+    .directive('highlightOnHover', function () {
+      return {
+        restrict: 'A',
+        link: function (scope, element) {
+          element.on('mouseenter', function () {
+            element.addClass('hover-highlight');
+          });
+          element.on('mouseleave', function () {
+            element.removeClass('hover-highlight');
+          });
+        }
+      };
+    });
+  </script>
+</body>
+</html>
