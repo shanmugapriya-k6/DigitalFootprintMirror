@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="digitalMirrorApp">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Score | Digital Mirror</title>
+  <style>
+    body {
+  background-image: url('5.jpg');
+  background-size: cover;
+  background-position: center top 80px; /* Pushes image down by 80px */
+  background-repeat: no-repeat;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+}
+
+
+   .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.logo-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 0;  /* Makes the image perfectly round */
+  object-fit: cover;   /* Ensures it fills the round container */
+}
+
+
+    nav {
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-left {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #66e6db;
+    }
+
+    .nav-center a {
+      margin: 0 10px;
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 12px 24px rgba(73, 230, 177, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-right a,
+    .dropdown-content a {
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 10px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-right a:hover,
+    .dropdown-content a:hover,
+    .nav-right a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-icon {
+      width: 42px;
+      height: 42px;
+      background-color: #3dbdb2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #121212;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #2c2c2c;
+      min-width: 160px;
+      right: 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      z-index: 1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+    }
+
+    .profile-container:hover .dropdown-content {
+      display: block;
+    }
+
+    /* Cards and bars */
+    .card {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .progress-bar {
+      background: #333;
+      border-radius: 10px;
+      height: 12px;
+      width: 100%;
+      margin: 8px 0;
+    }
+    .progress-fill {
+      height: 12px;
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+    .low { background: #4CAF50; }
+    .medium { background: #FF9800; }
+    .high { background: #F44336; }
+
+    .info-card {
+      background: #2a2a2a;
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 5px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #ddd;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #111;
+      color: #fff;
+      margin-top: 20px;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js">
+    
+  </script>
+</head>
+
+<body ng-controller="mainController">
+
+  <!-- Top Navbar from Homepage -->
+  <nav>
+    <div class="nav-left">
+  <img src="1.jpeg" alt="Logo" class="logo-img">
+  <span>Digital Footprint Mirror</span>
+</div>
+
+    <div class="nav-center">
+      <a href="home.html" class="active">Home</a>
+      <a href="score.html">Score</a>
+      <a href="report.html">Report</a>
+      <a href="tips.html">Privacy Tips</a>
+    </div>
+    <div class="nav-right" ng-if="!user">
+      <a href="auth.html" class="active">Login</a>
+      <a href="auth.html">Sign Up</a>
+    </div>
+    <div class="nav-right" ng-if="user">
+      <div class="greeting">Hi, {{ user.name }}</div>
+      <div class="profile-container">
+        <div class="profile-icon">{{ user.name.charAt(0).toUpperCase() }}</div>
+        <div class="dropdown-content">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" ng-click="logout()">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+    <h1>Privacy Score</h1>
+
+    <div class="card">
+      <h3>Cookies Risk: <span id="cookies-score">0%</span></h3>
+      <div class="progress-bar"><div class="progress-fill" id="cookies-bar"></div></div>
+    </div>
+    <div class="card">
+      <h3>Tracking Exposure: <span id="tracking-score">0%</span></h3>
+      <div class="progress-bar"><div class="progress-fill" id="tracking-bar"></div></div>
+    </div>
+    <div class="card">
+      <h3>Canvas Fingerprint Risk: <span id="canvas-score">0%</span></h3>
+      <div class="progress-bar"><div class="progress-fill" id="canvas-bar"></div></div>
+    </div>
+    <div class="card">
+      <h3>WebGL Vendor Exposure: <span id="webgl-score">0%</span></h3>
+      <div class="progress-bar"><div class="progress-fill" id="webgl-bar"></div></div>
+    </div>
+    <div class="card">
+      <h3>Audio Fingerprint Risk: <span id="audio-score">0%</span></h3>
+      <div class="progress-bar"><div class="progress-fill" id="audio-bar"></div></div>
+    </div>
+
+    <h2>Total Score: <span id="total-score">0%</span></h2>
+
+    <div class="info-card">
+      <strong>Your IP:</strong> <span id="ip-info">Loading...</span><br>
+      <strong>User Agent:</strong> <span id="ua-info">Loading...</span><br>
+      <strong>Screen Resolution:</strong> <span id="screen-info">Loading...</span><br>
+      <strong>Time Zone:</strong> <span id="tz-info">Loading...</span><br>
+      <strong>WebGL Vendor:</strong> <span id="webgl-vendor">Loading...</span><br>
+      <strong>Do Not Track:</strong> <span id="dnt-status">Loading...</span><br>
+      <strong>Fingerprint Hash:</strong> <span id="fp-hash">Loading...</span>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Digital Mirror | All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    function setProgressBar(barId, score) {
+      const bar = document.getElementById(barId);
+      bar.style.width = score + '%';
+      bar.classList.remove('low', 'medium', 'high');
+      if (score < 40) bar.classList.add('low');
+      else if (score < 70) bar.classList.add('medium');
+      else bar.classList.add('high');
+    }
+
+    function getWebGLVendor() {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) return 'Unavailable';
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown';
+    }
+
+    function detectCanvasFingerprint() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.textBaseline = 'top';
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "#f60";
+      ctx.fillRect(125,1,62,20);
+      ctx.fillStyle = "#069";
+      ctx.fillText("PrivacyCheck", 2, 15);
+      const dataUrl = canvas.toDataURL();
+      return dataUrl.length;
+    }
+
+    function detectAudioFingerprint() {
+      try {
+        const ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
+        const osc = ctx.createOscillator();
+        const analyser = ctx.createAnalyser();
+        const gain = ctx.createGain();
+        osc.connect(analyser);
+        analyser.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(0);
+        ctx.startRendering();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    async function getPrivacyData() {
+      const cookiesEnabled = navigator.cookieEnabled;
+      const cookiesRisk = cookiesEnabled ? 80 : 30;
+      document.getElementById('cookies-score').innerText = cookiesRisk + '%';
+      setProgressBar('cookies-bar', cookiesRisk);
+
+      const trackingRisk = (localStorage.length > 0 || sessionStorage.length > 0) ? 60 : 20;
+      document.getElementById('tracking-score').innerText = trackingRisk + '%';
+      setProgressBar('tracking-bar', trackingRisk);
+
+      const canvasEntropy = detectCanvasFingerprint();
+      const canvasRisk = canvasEntropy > 50000 ? 75 : 30;
+      document.getElementById('canvas-score').innerText = canvasRisk + '%';
+      setProgressBar('canvas-bar', canvasRisk);
+
+      const webglVendor = getWebGLVendor();
+      document.getElementById('webgl-vendor').innerText = webglVendor;
+      const webglRisk = webglVendor.includes('Intel') ? 60 : 80;
+      document.getElementById('webgl-score').innerText = webglRisk + '%';
+      setProgressBar('webgl-bar', webglRisk);
+
+      const audioRisk = detectAudioFingerprint() ? 65 : 20;
+      document.getElementById('audio-score').innerText = audioRisk + '%';
+      setProgressBar('audio-bar', audioRisk);
+
+      const total = Math.round((cookiesRisk + trackingRisk + canvasRisk + webglRisk + audioRisk) / 5);
+      document.getElementById('total-score').innerText = total + '%';
+
+      document.getElementById('ua-info').innerText = navigator.userAgent;
+      document.getElementById('screen-info').innerText = `${screen.width} x ${screen.height}`;
+      document.getElementById('tz-info').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      document.getElementById('dnt-status').innerText = navigator.doNotTrack === '1' ? 'Enabled' : 'Disabled';
+
+      const fp = await FingerprintJS.load({ monitoring: false });
+      const result = await fp.get();
+      document.getElementById('fp-hash').innerText = result.visitorId;
+
+      fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => document.getElementById('ip-info').innerText = data.ip)
+        .catch(() => document.getElementById('ip-info').innerText = 'Unavailable');
+    }
+
+    window.onload = getPrivacyData;
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script>
+  angular.module('digitalMirrorApp', [])
+    .controller('mainController', function($scope, $window) {
+      $scope.user = JSON.parse(localStorage.getItem("user")) || null;
+
+      $scope.logout = function() {
+        localStorage.removeItem("user");
+        $window.location.href = "auth.html";
+      };
+    });
+</script>
+
+</body>
+</html>

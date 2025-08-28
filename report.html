@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="PrivacyApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Report | Digital Mirror</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-animate.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      background-image: url('5.jpg');
+      background-size: cover;
+      background-position: center top 80px;
+      background-repeat: no-repeat;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .logo-img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+    }
+
+    nav {
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-left span {
+      color: #66e6db;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .nav-center a {
+      margin: 0 10px;
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 12px 24px rgba(73, 230, 177, 0.5);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-right a,
+    .dropdown-content a {
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 10px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-right a:hover,
+    .dropdown-content a:hover,
+    .nav-right a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .profile-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-icon {
+      width: 42px;
+      height: 42px;
+      background-color: #3dbdb2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #121212;
+      cursor: pointer;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #2c2c2c;
+      min-width: 160px;
+      right: 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      z-index: 1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+    }
+
+    .profile-container:hover .dropdown-content {
+      display: block;
+    }
+
+    .card {
+      background: #1e1e1e;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .low { color: #4CAF50; }
+    .medium { color: #FF9800; }
+    .high { color: #F44336; }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #111;
+      color: #fff;
+      margin-top: 20px;
+    }
+
+    .chart-container {
+      background: linear-gradient(to bottom right, #1f1f1f, #2c2c2c);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px auto;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+      border: 1px solid #2d2d2d;
+      max-width: 700px;
+      height: 300px;
+    }
+
+    .pdf-btn {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .fade-in.ng-hide { opacity: 0; }
+    .fade-in { transition: opacity 1s ease-in-out; opacity: 1; }
+
+    .detailed-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .detailed-list li {
+      background-color: #2a2a2a;
+      padding: 10px 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #e0e0e0;
+    }
+
+    #user-info {
+      background: #1f1f1f;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #4CAF50;
+    }
+  </style>
+</head>
+
+<body ng-controller="ReportController">
+
+  <nav>
+    <div class="nav-left">
+      <img src="1.jpeg" alt="Logo" class="logo-img">
+      <span>Digital Footprint Mirror</span>
+    </div>
+    <div class="nav-center">
+      <a href="home.html" class="active">Home</a>
+      <a href="score.html">Score</a>
+      <a href="report.html">Report</a>
+      <a href="tips.html">Privacy Tips</a>
+    </div>
+    <div class="nav-right" ng-if="!userName">
+      <a href="auth.html" class="active">Login</a>
+      <a href="auth.html">Sign Up</a>
+    </div>
+    <div class="nav-right" ng-if="userName">
+      <div class="greeting">Hi, {{ userName }}</div>
+      <div class="profile-container">
+        <div class="profile-icon">{{ userName.charAt(0).toUpperCase() }}</div>
+        <div class="dropdown-content">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" ng-click="logout()">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container fade-in" id="report-section" ng-show="loaded">
+    <div id="user-info">
+      <h2>Welcome, {{ userName || 'User' }}</h2>
+      <p>Email: {{ userEmail || 'your@email.com' }}</p>
+    </div>
+
+    <h1>Your Privacy Report</h1>
+    <p>This report summarizes the privacy analysis based on your last scan.</p>
+
+    <div class="chart-container">
+      <canvas id="privacyChart"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>Total Privacy Score: <span id="total-score">Loading...</span></h2>
+      <p id="overall-analysis">Generating overall analysis...</p>
+    </div>
+
+    <div class="card">
+      <h3>Detailed Risk Analysis</h3>
+      <ul class="detailed-list">
+        <li>Cookies Risk: <span id="cookies-risk">Loading...</span></li>
+        <li>Tracking Exposure: <span id="tracking-risk">Loading...</span></li>
+        <li>Canvas Fingerprint: <span id="canvas-risk">Loading...</span></li>
+        <li>WebGL Vendor: <span id="webgl-risk">Loading...</span></li>
+        <li>Audio Fingerprint: <span id="audio-risk">Loading...</span></li>
+      </ul>
+    </div>
+
+    <button class="pdf-btn" onclick="downloadPDF()">Download PDF Report</button>
+  </main>
+
+  <footer>
+    <p>© 2025 Digital Mirror | All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    angular.module('PrivacyApp', ['ngAnimate'])
+
+    .factory('UserService', function () {
+      return {
+        getUser: function () {
+          return {
+            name: localStorage.getItem("userName"),
+            email: localStorage.getItem("userEmail")
+          };
+        },
+        getScores: function () {
+          return JSON.parse(localStorage.getItem("privacyScores")) || {
+            cookies: 0, tracking: 0, canvas: 0, webgl: 0, audio: 0, total: 0
+          };
+        },
+        clearUser: function () {
+          localStorage.removeItem("userName");
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("privacyScores");
+          localStorage.removeItem("privacyHistory");
+        }
+      };
+    })
+
+    .controller('ReportController', function($scope, $timeout, UserService) {
+      $scope.loaded = false;
+
+      const user = UserService.getUser();
+      $scope.userName = user.name;
+      $scope.userEmail = user.email;
+
+      $scope.logout = function () {
+        UserService.clearUser();
+        window.location.href = "auth.html";
+      };
+
+      $timeout(function () {
+        $scope.loaded = true;
+        loadReport();
+      }, 300);
+
+      function getRiskLevel(score) {
+        if (score < 40) return "low";
+        if (score < 70) return "medium";
+        return "high";
+      }
+
+      function loadReport() {
+        const scores = UserService.getScores();
+
+        document.getElementById('cookies-risk').innerText = scores.cookies + "% (" + getRiskLevel(scores.cookies) + ")";
+        document.getElementById('tracking-risk').innerText = scores.tracking + "% (" + getRiskLevel(scores.tracking) + ")";
+        document.getElementById('canvas-risk').innerText = scores.canvas + "% (" + getRiskLevel(scores.canvas) + ")";
+        document.getElementById('webgl-risk').innerText = scores.webgl + "% (" + getRiskLevel(scores.webgl) + ")";
+        document.getElementById('audio-risk').innerText = scores.audio + "% (" + getRiskLevel(scores.audio) + ")";
+        document.getElementById('total-score').innerText = scores.total + "%";
+
+        document.getElementById('overall-analysis').innerText =
+          scores.total < 40 ? "Your overall privacy risk is low. Keep your privacy settings as they are." :
+          scores.total < 70 ? "Your privacy risk is moderate. Consider improving your security measures." :
+          "Your privacy risk is high. Immediate steps are recommended to enhance your privacy.";
+
+        const history = JSON.parse(localStorage.getItem("privacyHistory")) || [];
+        history.push({ time: new Date().toLocaleString(), total: scores.total });
+        localStorage.setItem("privacyHistory", JSON.stringify(history));
+
+        const labels = history.map(item => item.time);
+        const data = history.map(item => item.total);
+
+        const ctx = document.getElementById('privacyChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Total Privacy Score (%)',
+              data: data,
+              fill: true,
+              backgroundColor: 'rgba(76, 175, 80, 0.1)',
+              borderColor: '#4CAF50',
+              borderWidth: 2,
+              tension: 0.3,
+              pointBackgroundColor: '#4CAF50'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                ticks: { color: '#e0e0e0' },
+                grid: { color: '#333' }
+              },
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { color: '#e0e0e0' },
+                grid: { color: '#333' }
+              }
+            },
+            plugins: {
+              legend: { labels: { color: '#e0e0e0' }},
+              tooltip: {
+                backgroundColor: '#333',
+                titleColor: '#fff',
+                bodyColor: '#fff'
+              }
+            }
+          }
+        });
+      }
+    });
+
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const reportElement = document.getElementById('report-section');
+
+      const canvas = await html2canvas(reportElement, { backgroundColor: '#121212', scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 190;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+      pdf.save('Privacy_Report.pdf');
+    }
+  </script>
+</body>
+</html>

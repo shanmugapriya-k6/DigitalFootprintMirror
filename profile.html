@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="profileApp" ng-controller="profileController">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Page</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+  background-image: url('5.jpg');
+  background-size: cover;
+  background-position: center top 80px; /* Pushes image down by 80px */
+  background-repeat: no-repeat;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+}
+
+
+   .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.logo-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 0;  /* Makes the image perfectly round */
+  object-fit: cover;   /* Ensures it fills the round container */
+}
+
+
+    nav {
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-left {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #66e6db;
+    }
+
+    .nav-center a {
+      margin: 0 10px;
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 12px 24px rgba(73, 230, 177, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-right a,
+    .dropdown-content a {
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 10px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-right a:hover,
+    .dropdown-content a:hover,
+    .nav-right a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-icon {
+      width: 42px;
+      height: 42px;
+      background-color: #3dbdb2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #121212;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #2c2c2c;
+      min-width: 160px;
+      right: 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      z-index: 1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+    }
+
+    .profile-container:hover .dropdown-content {
+      display: block;
+      
+    }
+
+
+    .profile-card {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+
+    .profile-picture {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-picture img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 4px solid #409e96;
+      object-fit: cover;
+    }
+
+    .edit-pic {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #409e96;
+      border-radius: 50%;
+      padding: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .edit-icon {
+      font-size: 20px;
+      cursor: pointer;
+      color: #409e96;
+      padding: 8px;
+    }
+
+    h2 {
+      margin-top: 1rem;
+      color: #3dbdb2;
+    }
+
+    .email {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 1rem;
+    }
+
+    .info {
+      text-align: left;
+      margin-top: 1rem;
+    }
+
+    .info p {
+      margin: 5px 0;
+    }
+
+    .update-btn {
+      margin-top: 1.5rem;
+      padding: 10px 20px;
+      background-color: #3dbdb2;
+      color: #121212;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #409e96;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+  <img src="1.jpeg" alt="Logo" class="logo-img">
+  <span>Digital Footprint Mirror</span>
+</div>
+
+    <div class="nav-center">
+      <a href="home.html" class="active">Home</a>
+      <a href="score.html">Score</a>
+      <a href="report.html">Report</a>
+      <a href="tips.html">Privacy Tips</a>
+    </div>
+    <div class="nav-right" ng-if="!user">
+      <a href="auth.html" class="active">Login</a>
+      <a href="auth.html">Sign Up</a>
+    </div>
+    <div class="nav-right" ng-if="user">
+      <div class="greeting">Hi, {{ user.name }}</div>
+      <div class="profile-container">
+        <div class="profile-icon">{{ user.name.charAt(0).toUpperCase() }}</div>
+        <div class="dropdown-content">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" ng-click="logout()">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-picture">
+        <img ng-src="{{user.profilePic}}" alt="Profile Picture">
+        <input type="file" id="uploadPic" style="display:none" onchange="angular.element(this).scope().uploadPic(this)">
+        <span class="edit-pic" onclick="document.getElementById('uploadPic').click()">✎</span>
+      </div>
+      <div class="edit-icon" title="Edit Profile" ng-click="editProfile()">
+        ✏️
+      </div>
+    </div>
+
+    <h2>{{user.name}}</h2>
+    <p class="email">{{user.email}}</p>
+
+    <div class="info">
+      <p><strong>Username:</strong> {{user.username}}</p>
+      <p><strong>Phone:</strong> {{user.phone}}</p>
+      <p><strong>Address:</strong> {{user.address}}</p>
+      <p><strong>Joined:</strong> {{user.joinedDate}}</p>
+    </div>
+
+    <button class="update-btn">Update</button>
+  </div>
+
+  <script>
+    angular.module("profileApp", [])
+      .controller("profileController", function ($scope) {
+        // Simulated login data
+        $scope.user = {
+          profilePic: "https://i.imgur.com/Wt9lV5N.png", // Default avatar
+          name: "DigitalFootprint",
+          email: "digitalfootprint@gmail.com",
+          username: "digitalfootprint_01",
+          phone: "+91 9876543210",
+          address: "Madurai, Tamil Nadu",
+          joinedDate: "June 2025"
+        };
+
+        $scope.editProfile = function () {
+          alert("Edit functionality will be available soon.");
+        };
+
+        $scope.logout = function () {
+          alert("You have been logged out.");
+          // Add logout logic if needed
+        };
+
+        $scope.uploadPic = function (input) {
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              $scope.$apply(function () {
+                $scope.user.profilePic = e.target.result;
+              });
+            };
+            reader.readAsDataURL(input.files[0]);
+          }
+        };
+      });
+  </script>
+
+</body>
+</html>

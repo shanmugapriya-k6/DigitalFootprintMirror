@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="authApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Sign Up - Digital Mirror</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body {
+      background-image: url('5.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+    }
+    .auth-container {
+      margin: 150px auto;
+      max-width: 400px;
+      padding: 30px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+    }
+    h2 {
+      text-align: center;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background-color: #2c2c2c;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 4px;
+    }
+    .password-toggle {
+      position: relative;
+    }
+    .password-toggle-icon {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #aaa;
+    }
+    .error {
+      color: #e77a7a;
+      font-size: 0.85rem;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color:#409e96;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    button:hover{
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 12px 24px rgba(73, 230, 177, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    span:hover{
+      transform: scale(1.05) translateY(-5px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .toggle-link {
+      color: #409e96;
+      cursor: pointer;
+      text-align: center;
+      display: block;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body ng-controller="AuthController">
+  <div class="auth-container">
+    <h2>{{ isLogin ? 'Login' : 'Sign Up' }}</h2>
+    <form ng-submit="submitForm()">
+      <input type="text" ng-model="user.name" ng-if="!isLogin" placeholder="Name" required>
+      <input type="email" ng-model="user.email" placeholder="Email" required>
+      <div class="password-toggle">
+        <input ng-attr-type="{{showPassword ? 'text' : 'password'}}" ng-model="user.password" placeholder="Password" required>
+        <span class="password-toggle-icon" ng-click="togglePassword()">{{ showPassword ? '👁' : '🕶' }}</span>
+      </div>
+      <div class="error" ng-if="!isLogin && passwordError">{{ passwordError }}</div>
+      <button type="submit">{{ isLogin ? 'Login' : 'Sign Up' }}</button>
+    </form>
+    <span class="toggle-link" ng-click="toggleForm()">
+      {{ isLogin ? 'New user? Sign Up here' : 'Already have an account? Login here' }}
+    </span>
+  </div>
+
+  <script>
+    angular.module('authApp', [])
+      .controller('AuthController', ['$scope', '$window', '$http', function($scope, $window, $http) {
+        $scope.isLogin = true;
+        $scope.user = {};
+        $scope.showPassword = false;
+        $scope.passwordError = '';
+
+        $scope.toggleForm = function() {
+          $scope.isLogin = !$scope.isLogin;
+          $scope.user = {};
+          $scope.passwordError = '';
+        };
+
+        $scope.togglePassword = function() {
+          $scope.showPassword = !$scope.showPassword;
+        };
+
+        function validatePassword(pw) {
+          if (!pw || pw.length < 8) return 'Password must be at least 8 characters';
+          if (!/[A-Z]/.test(pw)) return 'Must include at least one uppercase letter';
+          if (!/[!@#$%^&*(),.?":{}|<>]/.test(pw)) return 'Must include at least one special character';
+          return '';
+        }
+
+        $scope.submitForm = function() {
+          if (!$scope.isLogin) {
+            // Sign Up
+            const err = validatePassword($scope.user.password);
+            if (err) {
+              $scope.passwordError = err;
+              return;
+            }
+
+            $http.post('http://localhost:3000/api/auth/signup', $scope.user)
+              .then(function(response) {
+                alert('Sign up successful. Please login.');
+                $scope.toggleForm();
+              })
+              .catch(function(error) {
+                alert(error.data.message || 'Signup failed.');
+              });
+
+          } else {
+            // Login
+            $http.post('http://localhost:3000/api/auth/login', $scope.user)
+              .then(function(response) {
+                const user = response.data.user;
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+                alert('Login successful');
+                $window.location.href = 'home.html';
+              })
+              .catch(function(error) {
+                alert(error.data.message || 'Login failed.');
+              });
+          }
+        };
+      }]);
+  </script>
+</body>
+</html>

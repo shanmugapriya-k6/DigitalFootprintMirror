@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How It Works | Digital Footprint Mirror</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+  background-image: url('5.jpg');
+  background-size: cover;
+  background-position: center top 80px; /* Pushes image down by 80px */
+  background-repeat: no-repeat;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+}
+
+
+   .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.logo-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 0;  /* Makes the image perfectly round */
+  object-fit: cover;   /* Ensures it fills the round container */
+}
+
+
+    nav {
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-left {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #66e6db;
+    }
+
+    .nav-center a {
+      margin: 0 10px;
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-center a:hover,
+    .nav-center a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 12px 24px rgba(73, 230, 177, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .nav-right a,
+    .dropdown-content a {
+      color: #dddddd;
+      text-decoration: none;
+      padding: 10px 10px;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-right a:hover,
+    .dropdown-content a:hover,
+    .nav-right a.active {
+      background-color: #409e96;
+      color: white;
+      transform: scale(1.05);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .profile-icon {
+      width: 42px;
+      height: 42px;
+      background-color: #3dbdb2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #121212;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #2c2c2c;
+      min-width: 160px;
+      right: 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+      z-index: 1;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 12px 16px;
+    }
+
+    .profile-container:hover .dropdown-content {
+      display: block;
+    }
+
+
+    .how-it-works-container {
+      max-width: 1000px;
+      margin: 80px auto;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 15px;
+    }
+
+    .how-it-works-container h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+
+    .step {
+      margin-bottom: 30px;
+    }
+
+    .step h2 {
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .how-it-works-container {
+        margin: 40px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-left">
+  <img src="1.jpeg" alt="Logo" class="logo-img">
+  <span>Digital Footprint Mirror</span>
+</div>
+
+    <div class="nav-center">
+      <a href="home.html" class="active">Home</a>
+      <a href="score.html">Score</a>
+      <a href="report.html">Report</a>
+      <a href="tips.html">Privacy Tips</a>
+    </div>
+    <div class="nav-right" ng-if="!user">
+      <a href="auth.html" class="active">Login</a>
+      <a href="auth.html">Sign Up</a>
+    </div>
+    <div class="nav-right" ng-if="user">
+      <div class="greeting">Hi, {{ user.name }}</div>
+      <div class="profile-container">
+        <div class="profile-icon">{{ user.name.charAt(0).toUpperCase() }}</div>
+        <div class="dropdown-content">
+          <a href="profile.html">View Profile</a>
+          <a href="settings.html">Settings</a>
+          <a href="#" ng-click="logout()">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="how-it-works-container">
+    <h1>How Digital Footprint Mirror Works</h1>
+
+    <div class="step">
+      <h2>1. Collect Minimal Data</h2>
+      <p>We only collect the necessary information from your signup details and browsing behavior with your permission. We respect your privacy and don’t store sensitive information.</p>
+    </div>
+
+    <div class="step">
+      <h2>2. Analyze Your Digital Behavior</h2>
+      <p>Using advanced client-side scripts, we analyze your browsing patterns, visited sites, and search preferences to give you insights into your digital identity.</p>
+    </div>
+
+    <div class="step">
+      <h2>3. Generate a Score</h2>
+      <p>Our system evaluates your footprint based on privacy exposure, security concerns, and online reputation. You’ll receive a detailed report and tips for improvement.</p>
+    </div>
+
+    <div class="step">
+      <h2>4. Suggest Improvements</h2>
+      <p>You’ll get actionable advice to enhance your online privacy and reputation — such as changing passwords, limiting permissions, or updating your social presence.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
